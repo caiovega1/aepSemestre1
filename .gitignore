@@ -1,52 +1,339 @@
-# Prerequisites
-*.d
+#include<stdio.h>
+#include<stdlib.h>
+#include<locale.h>
+#include<windows.h> 
+#include<conio.h> 
 
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+#define Verdadeiro 1
+ 
+//Função gotoxy
+void gotoxy(int x, int y){
+	COORD coord;
+	coord.X = x;
+	coord.Y = y;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
 
-# Linker output
-*.ilk
-*.map
-*.exp
+void printarMenu(){
+	gotoxy(35,10);
+	printf("=====================================================");
+	gotoxy(35,11);
+	printf("=                     MENU                          =");
+	gotoxy(35,12);
+	printf("=   Começar o Jogo                                  =");
+	gotoxy(35,13);  
+	printf("=   Selecionar level                                =");
+	gotoxy(35,14);  
+	printf("=   Sair do jogo                                    =");
+	gotoxy(35,15);
+	printf("=====================================================");
+}
 
-# Precompiled Headers
-*.gch
-*.pch
+void imprimirCursor2(int lin,int col){
+	gotoxy(col,lin);
+	printf("->");
+}
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+void imprimirCursor(int lin){
+	gotoxy(36,lin);
+	printf("->");
+}
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+void movimentarCursor(char tecla,int *lin){
+	switch(tecla){            
+		case 80:	
+			*lin += 1 ;
+			if(*lin >14){
+				*lin = 12;
+			}
+			break;
+		case 72:
+			*lin -=1 ;
+			if(*lin <12){
+				*lin=14;
+			}
+			break;	
+	}
+	imprimirCursor(*lin);
+}
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+int printarTexto2(char info[], int linha){
+	 int x=0,quebrar=0,col=20;
+	 linha=linha+2; 
+    while(info[x]!='\0'){
+		gotoxy(col,linha);          
+	    printf("%c",info[x]);       
+    	if(info[x]==' '){
+    		if(quebrar == 1){
+    			linha++;
+    			col=20;
+    			quebrar=0;
+			}
+        	Sleep(70);
+		}
+        else 
+            Sleep(10);  
+		x++;
+		col++;
+		if(x%60 == 0)
+			quebrar = 1;		
+	}
+	return linha;
+}
 
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
+int printarTexto(char info[]){
+	int x=0,quebrar=0,linha=4,col=25;   
+    while(info[x]!='\0'){
+		gotoxy(col,linha);          
+	    printf("%c",info[x]);       
+    	if(info[x]==' '){
+    		if(quebrar == 1){
+    			linha++;
+    			col=36;
+    			quebrar=0;
+			}
+        	Sleep(50);
+		}
+        else 
+            Sleep(10);  
+		x++;
+		col++;
+		if(x%60 == 0)
+			quebrar = 1;
+	}
+	
+	return linha;	
+}
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+void selecionarLevel(int*level){
+	gotoxy(35,11);
+	printf("=====================================================");
+	gotoxy(35,12);
+	printf("Informe o level que deseja começar : ");
+	scanf("%d",level);
+}
+
+void tutorial(int *level,char tecla){
+	system("cls");
+	tecla = NULL;
+	char tutorial[]={"Informações serão apresentadas dessa forma na tela. E o seu dever é buscar compreender os textos e responder as questões assim acumulando pontos. Os pontos são distribuídos dessa forma: alternativa correta 2 pontos; alternativa \"meio-certa\" 1 ponto; alternativa errada 0 pontos. A complexidade das alternativas tendem a aumentar com o decorres dos leveis. "};
+	printarTexto(tutorial);
+	while(tecla != 13){
+		printf("\n\n                      Pressione ENTER para continuar para as questões...");
+		tecla = getch();
+		while(tecla <=0 || tecla ==122)
+			tecla = getch();
+	}
+	//fim
+	*level+=1;
+}
+
+void level1(int *level,char tecla,int *pontos){
+	system("cls");
+	tecla = NULL;
+	char info[]={"A LGPD cria um conjunto de novos conceitos jurídicos (e.g. \"dados pessoais\", \"dados pessoais sensíveis\"), estabelece as condições nas quais os dados pessoais podem ser tratados, define um conjunto de direitos para os titulares dos dados, gera obrigações específicas para os controladores dos dados e cria uma série de procedimentos e normas para que haja maior cuidado com o tratamento de dados pessoais e compartilhamento com terceiros."};
+	char questao[]={"No que consiste os dados pessoais? : "};
+	char alternativa1[]={" 1 - Toda informação relacionada a pessoa natural identificada ou identificável(RG, CPF e E-mail)."};//correta
+	char alternativa2[]={" 2 - Dados relativos a uma pessoa jurídica ( razão social, CNPJ, endereço comercial, etc.)"};// errada
+	char alternativa3[]={" 3 - Apenas informação relacionada a pessoa que pode gerar qualquer tipo de discriminação(Etnia, Religião e Opinião politica)"};// meio certa 
+	int linha = NULL, posicaoA1, posicaoA2, posicaoA3;
+	//Informações
+	printarTexto(info);
+	while(tecla != 13){
+		printf("\n\n                      Pressione ENTER para continuar para as questões...");
+		tecla = getch();
+		while(tecla <=0 || tecla ==122)
+			tecla = getch();
+	}
+	
+	//Questão
+	
+	system("cls");
+	linha = printarTexto(questao);
+	//alternativa1
+	posicaoA1 = linha+2;
+	linha = printarTexto2(alternativa1,linha);
+	//alternativa2
+	posicaoA2 = linha+2;
+	linha = printarTexto2(alternativa2,linha);
+	//alternativa3
+	posicaoA3 = linha+2;
+	linha = printarTexto2(alternativa3,linha);
+	
+	tecla = NULL;
+	//projeto futuro = randomizar a posição das alternativas
+		printf("\n\n              Selecione uma questão utilizando os seus respectivos números...");
+	
+		tecla = getch();
+		while(tecla <=0 || tecla ==122)
+			tecla = getch();
+		switch(tecla){
+			case 49: imprimirCursor2(posicaoA1,19);
+				tecla = getch();
+				while(tecla <=0 || tecla ==122)
+					tecla = getch();
+				*pontos += 2;
+			 break;
+			case 50: imprimirCursor2(posicaoA2,19);
+				tecla = getch();
+				while(tecla <=0 || tecla ==122)
+					tecla = getch();
+				*pontos += 0;
+			 break;
+			case 51: imprimirCursor2(posicaoA3,19);
+				tecla = getch();
+				while(tecla <=0 || tecla ==122)
+					tecla = getch();
+				*pontos += 1;
+			 break;
+		}
+	//fim
+	*level+=1;
+}
+
+void level2(int *level,char tecla,int *pontos){
+	system("cls");
+	tecla = NULL;
+	char info[]={"A LGPD cria um conjunto de novos conceitos jurídicos (e.g. \"dados pessoais\", \"dados pessoais sensíveis\"), estabelece as condições nas quais os dados pessoais podem ser tratados, define um conjunto de direitos para os titulares dos dados, gera obrigações específicas para os controladores dos dados e cria uma série de procedimentos e normas para que haja maior cuidado com o tratamento de dados pessoais e compartilhamento com terceiros."};
+	char questao[]={"No que consiste os dados pessoais sensiveis? : "};
+	char alternativa1[]={" 1 - Toda informação relacionada a pessoa natural identificada ou identificável(RG, CPF e E-mail)."};//correta
+	char alternativa2[]={" 2 - Dados relativos a uma pessoa jurídica ( razão social, CNPJ, endereço comercial, etc.)"};// errada
+	char alternativa3[]={" 3 - Apenas informação relacionada a pessoa que pode gerar qualquer tipo de discriminação(Etnia, Religião e Opinião politica)"};// meio certa 
+	int linha = NULL, posicaoA1, posicaoA2, posicaoA3;
+	//Informações
+	printarTexto(info);
+	while(tecla != 13){
+		printf("\n\n                      Pressione ENTER para continuar para as questões...");
+		tecla = getch();
+		while(tecla <=0 || tecla ==122)
+			tecla = getch();
+	}
+	
+	//Questão
+	
+	system("cls");
+	linha = printarTexto(questao);
+	//alternativa1
+	posicaoA1 = linha+2;
+	linha = printarTexto2(alternativa1,linha);
+	//alternativa2
+	posicaoA2 = linha+2;
+	linha = printarTexto2(alternativa2,linha);
+	//alternativa3
+	posicaoA3 = linha+2;
+	linha = printarTexto2(alternativa3,linha);
+	
+	tecla = NULL;
+	//projeto futuro = randomizar a posição das alternativas
+		printf("\n\n              Selecione uma questão utilizando os seus respectivos números...");
+	
+		tecla = getch();
+		while(tecla <=0 || tecla ==122)
+			tecla = getch();
+		switch(tecla){
+			case 49: imprimirCursor2(posicaoA1,19);
+				tecla = getch();
+				while(tecla <=0 || tecla ==122)
+					tecla = getch();
+				*pontos += 1;
+			 break;
+			case 50: imprimirCursor2(posicaoA2,19);
+				tecla = getch();
+				while(tecla <=0 || tecla ==122)
+					tecla = getch();
+				*pontos += 2;
+			 break;
+			case 51: imprimirCursor2(posicaoA3,19);
+				tecla = getch();
+				while(tecla <=0 || tecla ==122)
+					tecla = getch();
+				*pontos += 0;
+			 break;
+		}
+	//fim
+	*level+=1;
+}
+
+void jogo(int *level,char tecla,int *pontos){
+	
+	switch(*level){
+		case 0:
+			tutorial(level,tecla);
+		break;
+		
+		case 1: 
+			level1(level,tecla,pontos);
+		break;
+		
+		case 2:
+			level2(level,tecla,pontos);
+		break;
+	}
+}
+
+void status(int level, int pontos){
+	system("cls");
+	
+	gotoxy(36,13);
+	printf(" Level :%d",level);
+	
+	gotoxy(36,15);
+	printf(" Pontos :%d",pontos);
+	
+	gotoxy(36,20);
+	printf(" Pressione qualquer tecla para prosseguir..."); 
+	getch();
+}
+
+int main(){
+	setlocale(LC_ALL, "Portuguese");
+	char teclaUsuario = NULL;
+	int level=0, sair=0, lin = 12, pontos=0;
+	
+	//Menu inicial
+	while (Verdadeiro){
+		system("cls");
+	    printarMenu();
+	    movimentarCursor(teclaUsuario,&lin);
+		teclaUsuario=getch();
+		while(teclaUsuario <=0 || teclaUsuario ==224){
+			teclaUsuario =getch();
+		}
+	    
+		if(teclaUsuario == 13 && lin == 14 || teclaUsuario == 32 && lin == 14){
+	    	system("cls");
+	    	sair=Verdadeiro;
+	    	break;
+		}
+		
+		if(teclaUsuario == 13 && lin == 13 || teclaUsuario == 32 && lin == 13){
+	    	system("cls");
+	    	selecionarLevel(&level);
+			break;
+		}
+		
+		if(teclaUsuario == 13 && lin == 12 || teclaUsuario == 32 && lin == 12){
+	    	system("cls");
+	    	break;
+		}
+	}
+	
+	while(sair != Verdadeiro ){	
+		status(level,pontos);
+		jogo(&level,teclaUsuario,&pontos);
+		
+		if(level == 3){
+			status(level,pontos);
+			system("cls");
+			char fimDemo[]={"Fim da versão demonstrativa do jogo. Em versões futuras esperamos implementar diferentes finais possíveis de acordo com a pontuação obtida"};
+			printarTexto(fimDemo);
+			sair =Verdadeiro;
+		}		
+	}
+	
+	gotoxy(35,40);
+	printf("FIM DE JOGO");
+	
+	getch();
+}
+
